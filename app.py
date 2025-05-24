@@ -1,5 +1,6 @@
 
-import streamlit as st
+# app.py
+# Tüm kedi bilgi kategorilerini içeren terminal tabanlı chatbot
 
 CAT_KNOWLEDGE = {
     "ırklar": {
@@ -70,20 +71,44 @@ CAT_KNOWLEDGE = {
     },
 }
 
-def find_answer(question):
-    question_lower = question.lower()
-    for category, items in CAT_KNOWLEDGE.items():
-        for keyword, info in items.items():
-            if keyword.lower() in question_lower:
-                return f"[{category.upper()}] {keyword}: {info}"
-    return "Bu konuda net bir bilgim yok, lütfen daha farklı bir şekilde sorun."
+def list_categories():
+    print("\nKategoriler:")
+    for i, category in enumerate(CAT_KNOWLEDGE.keys(), 1):
+        print(f"{i}. {category}")
+    print()
 
-# Streamlit arayüzü
-st.set_page_config(page_title="Kedi Bilgi Chatbotu", layout="centered")
-st.title("Kedi Bilgi Chatbotu")
+def list_keywords(category):
+    print(f"{category} kategorisindeki başlıklar:")
+    for i, keyword in enumerate(CAT_KNOWLEDGE[category].keys(), 1):
+        print(f"{i}. {keyword}")
+    print()
 
-user_input = st.text_input("Sorunuzu yazın (örn: Sphynx kedisi nasıldır?)")
+def show_info(category, keyword):
+    print(f"\n[{category.upper()}] {keyword}: {CAT_KNOWLEDGE[category][keyword]}\n")
 
-if user_input:
-    response = find_answer(user_input)
-    st.markdown(f"**Cevap:** {response}")
+def run_chatbot():
+    while True:
+        list_categories()
+        selected_category = input("Bir kategori seçin (çıkmak için q): ")
+        if selected_category.lower() == 'q':
+            break
+
+        try:
+            category_name = list(CAT_KNOWLEDGE.keys())[int(selected_category) - 1]
+        except:
+            print("Geçersiz seçim.\n")
+            continue
+
+        list_keywords(category_name)
+        selected_keyword = input("Bir başlık seçin (geri dönmek için b): ")
+        if selected_keyword.lower() == 'b':
+            continue
+
+        try:
+            keyword_name = list(CAT_KNOWLEDGE[category_name].keys())[int(selected_keyword) - 1]
+            show_info(category_name, keyword_name)
+        except:
+            print("Geçersiz seçim.\n")
+
+if __name__ == "__main__":
+    run_chatbot()
